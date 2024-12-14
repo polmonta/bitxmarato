@@ -18,7 +18,7 @@ const HomeScreen = () => {
   return (
     <View style={styles.container}>
         <View style={styles.questionContainer}>
-            <Text style={styles.questionText}>Té febre?</Text>
+            <Text style={styles.questionText}>Ha notat tiratge muscular per respirar?</Text>
         </View>
         <View style={styles.buttonsContainer}>
             <View style={styles.buttonRow}>
@@ -41,7 +41,10 @@ const HomeScreen = () => {
             
         </View>
         <View style={styles.arrowsContainer}>
-            <TouchableOpacity style={styles.arrowContainer} onPress={() => navigation.navigate("Desaturacio")}>
+            <TouchableOpacity style={styles.arrowContainer} onPress={() => navigation.navigate("Ofeg")}>
+
+            </TouchableOpacity>
+            <TouchableOpacity style={styles.arrowContainer} onPress={() => navigation.navigate("Xiulets")}>
 
             </TouchableOpacity>
         </View>
@@ -143,7 +146,7 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         height: Height*0.1,
         marginTop: Height*0.05,
-        justifyContent: 'flex-end',
+        justifyContent: 'space-between',
         alignItems: 'center',
     },
     arrowContainer: {

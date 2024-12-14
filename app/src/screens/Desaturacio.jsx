@@ -8,6 +8,12 @@ import { modeA, modeB, Width, Height } from '../../globalVariables';
 
 
 const HomeScreen = () => {
+  const [activeButton, setActiveButton] = useState(null); // Estado para el botón activo
+  
+    const handlePress = (button) => {
+        // Si se presiona el botón activo, lo desactiva, si no, activa el nuevo botón
+        setActiveButton((prevActive) => (prevActive === button ? null : button));
+    };
   const navigation = useNavigation();
   return (
     <View style={styles.container}>
@@ -16,16 +22,15 @@ const HomeScreen = () => {
         </View>
         <View style={styles.buttonsContainer}>
             <View style={styles.buttonRow}>
-                <TouchableOpacity style={styles.buttonYes}>
+                <TouchableOpacity style={[ styles.buttonYes, activeButton === 'button1' && styles.buttonActiveYes,]} onPress={() => handlePress('button1')} >
                     <View style={styles.iconContainer}>
 
                     </View>
                     <Text style={styles.buttonText}>SI  </Text>
                 </TouchableOpacity>
-                
             </View>
             <View style={styles.buttonRow}>
-                <TouchableOpacity style={styles.buttonNo}>
+                <TouchableOpacity style={[ styles.buttonNo, activeButton === 'button2' && styles.buttonActiveNo,]} onPress={() => handlePress('button2')} >
                     <View style={styles.iconContainer}>
 
                     </View>
@@ -88,6 +93,20 @@ const styles = StyleSheet.create({
         borderRadius: 10,
         justifyContent: 'space-around',
     },
+    buttonActiveYes: {
+        backgroundColor: 'green', // Color diferente para el botón activo
+        opacity: 0.7, // Cambiar opacidad cuando está activo
+        shadowColor: 'green',
+        shadowOffset: {
+            width: 0,
+            height: 0,
+        },
+        shadowOpacity: 2,
+        shadowRadius: 20,
+        elevation: 0,
+        borderColor: 'black',
+        borderWidth: 5,
+    },
     buttonNo: {
         height: '100%',
         width: '45%',
@@ -95,6 +114,20 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         borderRadius: 10,
         justifyContent: 'space-around',
+    },
+    buttonActiveNo: {
+        backgroundColor: 'red', // Color diferente para el botón activo
+        opacity: 0.7, // Cambiar opacidad cuando está activo
+        shadowColor: 'red',
+        shadowOffset: {
+            width: 0,
+            height: 0,
+        },
+        shadowOpacity: 2,
+        shadowRadius: 20,
+        elevation: 0,
+        borderColor: 'black',
+        borderWidth: 5,
     },
     buttonText: {
         color: 'white',

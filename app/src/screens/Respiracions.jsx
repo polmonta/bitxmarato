@@ -8,24 +8,30 @@ import { modeA, modeB, Width, Height } from '../../globalVariables';
 
 
 const HomeScreen = () => {
+  const [activeButton, setActiveButton] = useState(null); // Estado para el botón activo
+  
+    const handlePress = (button) => {
+        // Si se presiona el botón activo, lo desactiva, si no, activa el nuevo botón
+        setActiveButton((prevActive) => (prevActive === button ? null : button));
+    };
   const navigation = useNavigation();
   return (
     <View style={styles.container}>
         <View style={styles.questionContainer}>
-            <Text style={styles.questionText}>Ha notat un increment en les respiracions per minut? Són més de 19?</Text>
+            <Text style={styles.questionText}>Ha notat un increment en les respiracions per minut? Són més de 19?
+            </Text>
         </View>
         <View style={styles.buttonsContainer}>
             <View style={styles.buttonRow}>
-                <TouchableOpacity style={styles.buttonYes}>
+                <TouchableOpacity style={[ styles.buttonYes, activeButton === 'button1' && styles.buttonActiveYes,]} onPress={() => handlePress('button1')} >
                     <View style={styles.iconContainer}>
 
                     </View>
                     <Text style={styles.buttonText}>SI  </Text>
                 </TouchableOpacity>
-                
             </View>
             <View style={styles.buttonRow}>
-                <TouchableOpacity style={styles.buttonNo}>
+                <TouchableOpacity style={[ styles.buttonNo, activeButton === 'button2' && styles.buttonActiveNo,]} onPress={() => handlePress('button2')} >
                     <View style={styles.iconContainer}>
 
                     </View>
@@ -39,7 +45,7 @@ const HomeScreen = () => {
             <TouchableOpacity style={styles.arrowContainer} onPress={() => navigation.navigate("Desaturacio")}>
 
             </TouchableOpacity>
-            <TouchableOpacity style={styles.arrowContainer} onPress={() => navigation.navigate("Respiracions")}>
+            <TouchableOpacity style={styles.arrowContainer} onPress={() => navigation.navigate("Musculs")}>
 
             </TouchableOpacity>
         </View>
@@ -54,19 +60,17 @@ const styles = StyleSheet.create({
     },
 
     questionContainer: {
-        width: Width*0.85,
+        width: Width,
         height: Height*0.2,
         justifyContent: 'center', 
         alignItems: 'center',
         marginTop: Height*0.2,
-        alignSelf: 'center',
     },
 
     questionText: {
         fontSize: 30,
         fontWeight:'bold',
         color: modeB,
-        textAlign: 'center',
     },
 
     buttonsContainer: {
@@ -90,6 +94,20 @@ const styles = StyleSheet.create({
         borderRadius: 10,
         justifyContent: 'space-around',
     },
+    buttonActiveYes: {
+        backgroundColor: 'green', // Color diferente para el botón activo
+        opacity: 0.7, // Cambiar opacidad cuando está activo
+        shadowColor: 'green',
+        shadowOffset: {
+            width: 0,
+            height: 0,
+        },
+        shadowOpacity: 2,
+        shadowRadius: 20,
+        elevation: 0,
+        borderColor: 'black',
+        borderWidth: 5,
+    },
     buttonNo: {
         height: '100%',
         width: '45%',
@@ -97,6 +115,20 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         borderRadius: 10,
         justifyContent: 'space-around',
+    },
+    buttonActiveNo: {
+        backgroundColor: 'red', // Color diferente para el botón activo
+        opacity: 0.7, // Cambiar opacidad cuando está activo
+        shadowColor: 'red',
+        shadowOffset: {
+            width: 0,
+            height: 0,
+        },
+        shadowOpacity: 2,
+        shadowRadius: 20,
+        elevation: 0,
+        borderColor: 'black',
+        borderWidth: 5,
     },
     buttonText: {
         color: 'white',
