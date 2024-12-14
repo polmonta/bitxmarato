@@ -1,0 +1,30 @@
+<Text style={styles.questionText}>Té desaturació?</Text>
+
+Ha notat un increment en les respiracions per minut? Són més de 19?
+
+Ha notat tiratge muscular per respirar?
+
+Ha patit ofegs en repòs?
+
+
+Ha notat tiratge muscular per respirar?
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
