@@ -3,8 +3,8 @@ from flask_sqlalchemy import SQLAlchemy
 
 app = Flask(__name__)
 
-# Configure the database
-app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://<username>:<password>@<host>:<port>/<database>'
+# Configure the database to use IPv4
+app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres:bxm12345@aws-0-eu-central-1.pooler.supabase.com:5432/postgres'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 db = SQLAlchemy(app)
@@ -62,11 +62,12 @@ def crearPacient():
         db.session.rollback()
         return jsonify({"error": str(e)}), 500
 
-# Create tables before the first request
-@app.before_first_request
-def create_tables():
-    db.create_all()
-
 # Run the app
 if __name__ == "__main__":
+    # Ensure tables are created before the app starts
+    with app.app_context():
+        try:
+            db.create_all()
+        except Exception as e:
+            print(f"Database connection failed: {e}")
     app.run(host="127.0.0.1", port=5000)
