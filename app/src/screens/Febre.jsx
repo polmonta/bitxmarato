@@ -42,7 +42,7 @@ const HomeScreen = () => {
         </View>
         <View style={styles.arrowsContainer}>
             <TouchableOpacity style={styles.arrowContainer} onPress={() => navigation.navigate("Desaturacio")}>
-
+                
             </TouchableOpacity>
         </View>
     </View>
