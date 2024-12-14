@@ -1,31 +1,71 @@
-from flask import Flask, jsonify
+from flask import Flask, request, jsonify
 from flask_sqlalchemy import SQLAlchemy
 
-# Initialize Flask app
 app = Flask(__name__)
 
-# Database configuration
-app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres.dcmskpcyynimvlpyxnbi:bxm12345@aws-0-eu-central-1.pooler.supabase.com:5432/postgres'
-app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False  # Disable SQLAlchemy event system (optional)
+# Configure the database
+app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://<username>:<password>@<host>:<port>/<database>'
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
-# Initialize SQLAlchemy
 db = SQLAlchemy(app)
 
-# Example: Define a model for a "profiles" table
-class Profile(db.Model):
-    __tablename__ = 'profiles'
-    id = db.Column(db.BigInteger, primary_key=True)  # Use BigInteger for compatibility with Supabase
-    user_id = db.Column(db.BigInteger, db.ForeignKey('auth.users.id'), nullable=False)  # Foreign key to auth.users
-    name = db.Column(db.String(80), nullable=False)
+# Pacient model
+class Pacient(db.Model):
+    __tablename__ = 'pacients'
+    dni = db.Column(db.String(10), primary_key=True)  # dni is the primary key
+    nom_complet = db.Column(db.String(100), nullable=False)  # nomComplet is required
+    telefon = db.Column(db.String(15), unique=True, nullable=False)  # telefon is unique and required
+    hospital_pacient = db.Column(db.Integer, nullable=False)  # hospitalPacient is required
+    dni_metge_associat = db.Column(db.String(10), nullable=False)  # dniMetgeAssociat is required
+    malaltia = db.Column(db.String(10), nullable=False)  # malaltia is required
 
-# Example route to test DB connection
-@app.route('/profiles', methods=['GET'])
-def get_profiles():
+    def __init__(self, dni, nom_complet, telefon, hospital_pacient, dni_metge_associat, malaltia):
+        self.dni = dni
+        self.nom_complet = nom_complet
+        self.telefon = telefon
+        self.hospital_pacient = hospital_pacient
+        self.dni_metge_associat = dni_metge_associat
+        self.malaltia = malaltia
+
+# Endpoint to create a new pacient
+@app.route('/crearPacient', methods=['POST'])
+def crearPacient():
+    # Extract data from the request body
+    data = request.get_json()
+
+    dni = data.get('dni')
+    nom_complet = data.get('nomComplet')
+    telefon = data.get('telefon')
+    hospital_pacient = data.get('hospitalPacient')
+    dni_metge_associat = data.get('dniMetgeAssociat')
+    malaltia = data.get('malaltia')
+
+    # Input validation
+    if not dni or not nom_complet or not telefon or not hospital_pacient or not dni_metge_associat or not malaltia:
+        return jsonify({"error": "Missing required fields"}), 400
+
     try:
-        profiles = Profile.query.all()
-        return jsonify([{'id': profile.id, 'name': profile.name} for profile in profiles])
+        # Create a new Pacient instance
+        new_pacient = Pacient(
+            dni=dni,
+            nom_complet=nom_complet,
+            telefon=telefon,
+            hospital_pacient=hospital_pacient,
+            dni_metge_associat=dni_metge_associat,
+            malaltia=malaltia
+        )
+        # Add and commit to the database
+        db.session.add(new_pacient)
+        db.session.commit()
+        return jsonify({"message": "Pacient created successfully", "dni": new_pacient.dni}), 201
     except Exception as e:
-        return jsonify({'error': str(e)}), 500
+        db.session.rollback()
+        return jsonify({"error": str(e)}), 500
+
+# Create tables before the first request
+@app.before_first_request
+def create_tables():
+    db.create_all()
 
 # Run the app
 if __name__ == "__main__":
