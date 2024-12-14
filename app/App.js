@@ -4,6 +4,7 @@ import { createStackNavigator } from '@react-navigation/stack';
 import MainScreen from './src/screens/MainScreen'; 
 import Febre from './src/screens/Febre'; 
 import Desaturacio from './src/screens/Desaturacio'; 
+import Respiracions from './src/screens/Respiracions'; 
 const Stack = createStackNavigator();
 
 export default function App() {
@@ -17,6 +18,7 @@ export default function App() {
         <Stack.Screen name="Main" component={MainScreen} options={{ headerShown: false }} />
         <Stack.Screen name="Febre" component={Febre} options={{ headerShown: false }} />
         <Stack.Screen name="Desaturacio" component={Desaturacio} options={{ headerShown: false }} />
+        <Stack.Screen name="Respiracions" component={Respiracions} options={{ headerShown: false }} />
       </Stack.Navigator>
     </NavigationContainer>
   );

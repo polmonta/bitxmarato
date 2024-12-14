@@ -12,7 +12,7 @@ const HomeScreen = () => {
   return (
     <View style={styles.container}>
         <View style={styles.questionContainer}>
-            <Text style={styles.questionText}>Té desaturació?</Text>
+            <Text style={styles.questionText}>Ha notat un increment en les respiracions per minut? Són més de 19?</Text>
         </View>
         <View style={styles.buttonsContainer}>
             <View style={styles.buttonRow}>
@@ -36,7 +36,7 @@ const HomeScreen = () => {
             
         </View>
         <View style={styles.arrowsContainer}>
-            <TouchableOpacity style={styles.arrowContainer} onPress={() => navigation.navigate("Febre")}>
+            <TouchableOpacity style={styles.arrowContainer} onPress={() => navigation.navigate("Desaturacio")}>
 
             </TouchableOpacity>
             <TouchableOpacity style={styles.arrowContainer} onPress={() => navigation.navigate("Respiracions")}>
@@ -54,17 +54,19 @@ const styles = StyleSheet.create({
     },
 
     questionContainer: {
-        width: Width,
+        width: Width*0.85,
         height: Height*0.2,
         justifyContent: 'center', 
         alignItems: 'center',
         marginTop: Height*0.2,
+        alignSelf: 'center',
     },
 
     questionText: {
         fontSize: 30,
         fontWeight:'bold',
         color: modeB,
+        textAlign: 'center',
     },
 
     buttonsContainer: {
