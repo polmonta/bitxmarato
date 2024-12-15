@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { View, Text, StyleSheet, Dimensions, Image, TouchableOpacity, Modal } from 'react-native';
 import { useNavigation } from '@react-navigation/native'; // Import useNavigation hook
+import QRCode from 'react-native-qrcode-svg';
 
 
 
@@ -9,20 +10,26 @@ import { modeA, modeB, Width, Height } from '../../globalVariables';
 
 const HomeScreen = () => {
   const navigation = useNavigation();
+  const [qrSize, setQrSize] = useState(0);
   return (
     <View style={styles.container}>
       <View style={styles.nameContainer}>
         <Text style={styles.nameText}>MALLOL CORTIT, MARC</Text>
       </View>
       <View style={styles.qrContainer}>
-        <View style={styles.qr}>
-
+        <View style={styles.qr} onLayout={(event) => { const { width, height } = event.nativeEvent.layout; setQrSize(Math.min(width, height));}}>
+          <QRCode
+          value="https://www.google.com" // Aquí coloca la URL a la que deseas redirigir
+          size={qrSize}
+          color="black" // Color del código QR
+          backgroundColor= "#f3f2f7" // Fondo del código QR
+          />
         </View>
       </View>
       <View style={styles.sosButtonContainer}>
         <TouchableOpacity style={styles.sosButton} onPress={() => navigation.navigate("Febre")}>
             <View style={styles.iconContainer}>
-                <Image></Image>
+                <Image source={require('../images/quest.png')} style={styles.icon} ></Image>
             </View>
             <Text style={styles.sosText}>S.O.S   </Text>
 
@@ -60,11 +67,10 @@ const styles = StyleSheet.create({
     },
     qr: {
         width: '70%',
-        height: '70%',
-        borderColor: 'black',
-        borderWidth: 3,
+        height: '65%',
         alignSelf: 'center',
         borderRadius: 15,
+        overflow: 'hidden',
     },
 
     sosButtonContainer: {
@@ -87,15 +93,18 @@ const styles = StyleSheet.create({
     iconContainer: {
         width: '25%',
         height: '80%',
-        backgroundColor: 'black',
         alignSelf: 'center',
     },
     sosText: {
-        fontSize: 40,
-        fontWeight: 'bold',
-        color: 'white',
-        alignSelf: 'center',
-    }
+      fontSize: 40,
+      fontWeight: 'bold',
+      color: 'white',
+      alignSelf: 'center',
+    },
+    icon: {
+      width:'100%',
+      height: '100%',  
+  }
 });
 
 export default HomeScreen;
