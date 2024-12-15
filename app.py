@@ -1,5 +1,7 @@
 from flask import Flask, request, jsonify
 from flask_sqlalchemy import SQLAlchemy
+from datetime import datetime
+
 
 app = Flask(__name__)
 
@@ -36,7 +38,24 @@ class Hospital(db.Model):
         self.id = id
         self.nom = nom
 
+class Metge(db.Model):
+    __tablename__ = 'metges'
+    dni = db.Column(db.String(10), primary_key=True)
+    nomcomplet = db.Column(db.String(100), nullable=False)
+    telefon = db.Column(db.String(15), unique=True, nullable=False)
+    hospitaladscrit = db.Column(db.Integer, db.ForeignKey('hospitals.id'), nullable=False)
 
+class Malaltia(db.Model):
+    __tablename__ = 'malalties'
+    sigles = db.Column(db.String(10), primary_key=True)
+    nom = db.Column(db.String(100), nullable=False)
+
+class RespostaQuestionari(db.Model):
+    __tablename__ = 'respostaQuestionari'
+    data = db.Column(db.DateTime, primary_key=True, default=datetime.utcnow)
+    pacient = db.Column(db.String(10), db.ForeignKey('pacients.dni'), primary_key=True)
+    febre = db.Column(db.Boolean, nullable=False)
+    tos = db.Column(db.Boolean, nullable=False)
 
 
 
@@ -97,6 +116,81 @@ def crearHospital():
         db.session.rollback()
         return jsonify({"error": str(e)}), 500
 
+@app.route('/crearMetge', methods=['POST'])
+def crearMetge():
+    data = request.get_json()
+    try:
+        metge = Metge(
+            dni=data['dni'],
+            nomcomplet=data['nomComplet'],
+            telefon=data['telefon'],
+            hospitaladscrit=data['hospitaladscrit']
+        )
+        db.session.add(metge)
+        db.session.commit()
+        return jsonify({"message": "Metge created successfully", "dni": metge.dni}), 201
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({"error": str(e)}), 500
+
+@app.route('/crearMalaltia', methods=['POST'])
+def crearMalaltia():
+    data = request.get_json()
+    try:
+        malaltia = Malaltia(
+            sigles=data['sigles'],
+            nom=data['nom']
+        )
+        db.session.add(malaltia)
+        db.session.commit()
+        return jsonify({"message": "Malaltia created successfully", "sigles": malaltia.sigles}), 201
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({"error": str(e)}), 500
+
+@app.route('/crearRespostaQuestionari', methods=['POST'])
+def crearRespostaQuestionari():
+    data = request.get_json()
+    try:
+        resposta = RespostaQuestionari(
+            data=datetime.strptime(data['data'], "%Y-%m-%d %H:%M:%S"),
+            pacient=data['pacient'],
+            febre=data['febre'],
+            tos=data['tos']
+        )
+        db.session.add(resposta)
+        db.session.commit()
+        return jsonify({"message": "RespostaQuestionari created successfully", "pacient": resposta.pacient}), 201
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({"error": str(e)}), 500
+
+@app.route('/getPacientsByMetge/<dniMetgeAssociat>', methods=['GET'])
+def getPacientsByMetge(dniMetgeAssociat):
+    try:
+        # Query all pacients where dni_metge_associat matches the argument
+        pacients = Pacient.query.filter_by(dni_metge_associat=dniMetgeAssociat).all()
+
+        # Check if there are any matching records
+        if not pacients: 
+            return jsonify({"message": "No pacients found for the given doctor."}), 404
+
+        # Convert the query results to a list of dictionaries
+        result = [
+            {
+                "dni": pacient.dni,
+                "nomComplet": pacient.nom_complet,
+                "telefon": pacient.telefon,
+                "hospitalPacient": pacient.hospital_pacient,
+                "dniMetgeAssociat": pacient.dni_metge_associat,
+                "malaltia": pacient.malaltia
+            }
+            for pacient in pacients
+        ]
+
+        return jsonify(result), 200
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
 
 # Run the app
 if __name__ == "__main__":

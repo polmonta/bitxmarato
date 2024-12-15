@@ -1,24 +1,21 @@
-# Use an official Python image as the base
+# Use a base image (assuming Python)
 FROM python:3.12-slim
 
 # Set the working directory inside the container
 WORKDIR /app
 
-# Install system dependencies
-RUN apt update && apt install -y \
+# Copy application files into the container
+COPY . /app
+
+# Install system dependencies and Python libraries
+RUN apt-get update && apt-get install -y \
     curl \
     iputils-ping \
-    dnsutils \
     postgresql-client \
-    python3-pip \
-    libpq-dev
+    && pip install --no-cache-dir -r requirements.txt
 
-# Install Python dependencies
-COPY requirements.txt .
-RUN pip install --no-cache-dir -r requirements.txt --break-system-packages
+# Ensure the container doesn't execute the Flask app by default
+# (No CMD or ENTRYPOINT here to prevent immediate execution)
 
-# Expose Flask's default port
+# Expose the port for Flask
 EXPOSE 5000
-
-# Command to run the Flask app
-CMD ["python3", "app.py"]
