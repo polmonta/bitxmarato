@@ -50,12 +50,18 @@ class Malaltia(db.Model):
     sigles = db.Column(db.String(10), primary_key=True)
     nom = db.Column(db.String(100), nullable=False)
 
-class RespostaQuestionari(db.Model):
-    __tablename__ = 'respostaQuestionari'
-    data = db.Column(db.DateTime, primary_key=True, default=datetime.utcnow)
-    pacient = db.Column(db.String(10), db.ForeignKey('pacients.dni'), primary_key=True)
-    febre = db.Column(db.Boolean, nullable=False)
-    tos = db.Column(db.Boolean, nullable=False)
+class respostaquestionari(db.Model):
+    __tablename__ = 'respostaquestionari'
+    id = db.Column(db.Integer, primary_key=True)  # Primary key
+    data = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)  # Timestamp
+    pacient = db.Column(db.String(10), db.ForeignKey('pacients.dni'), nullable=False)  # Foreign key
+    febre = db.Column(db.Boolean, nullable=True)  # Allow NULL until all values are filled
+    desaturacio = db.Column(db.Boolean, nullable=True)
+    increps = db.Column(db.Boolean, nullable=True)
+    tirmusc = db.Column(db.Boolean, nullable=True)
+    ofeg = db.Column(db.Boolean, nullable=True)
+    xiulets = db.Column(db.Boolean, nullable=True)
+    completed = db.Column(db.Boolean, default=False)  # Automatically updated via a trigger
 
 
 
@@ -152,15 +158,23 @@ def crearMalaltia():
 def crearRespostaQuestionari():
     data = request.get_json()
     try:
-        resposta = RespostaQuestionari(
+        # Create a new instance of respostaquestionari
+        resposta = respostaquestionari(
+            id=data['id'],
             data=datetime.strptime(data['data'], "%Y-%m-%d %H:%M:%S"),
             pacient=data['pacient'],
-            febre=data['febre'],
-            tos=data['tos']
+            febre=data.get('febre'),  # Use .get() to handle optional values
+            desaturacio=data.get('desaturacio'),
+            increps=data.get('increps'),
+            tirmusc=data.get('tirmusc'),
+            ofeg=data.get('ofeg'),
+            xiulets=data.get('xiulets')
         )
+        
+        # Add and commit the new record to the database
         db.session.add(resposta)
         db.session.commit()
-        return jsonify({"message": "RespostaQuestionari created successfully", "pacient": resposta.pacient}), 201
+        return jsonify({"message": "respostaquestionari created successfully", "id": resposta.id}), 201
     except Exception as e:
         db.session.rollback()
         return jsonify({"error": str(e)}), 500
@@ -168,24 +182,103 @@ def crearRespostaQuestionari():
 @app.route('/getPacientsByMetge/<dniMetgeAssociat>', methods=['GET'])
 def getPacientsByMetge(dniMetgeAssociat):
     try:
-        pacients = Pacient.query.filter_by(dnimetgeassociat=dniMetgeAssociat).all()
+        # Query only nom_complet and dni for pacients where dni_metge_associat matches
+        pacients = Pacient.query.with_entities(Pacient.nomcomplet, Pacient.dni)\
+            .filter_by(dnimetgeassociat=dniMetgeAssociat).all()
 
+        # Check if there are any matching records
         if not pacients:
             return jsonify({"message": "No pacients found for the given doctor."}), 404
 
-        result = [
-            {
-                "dni": pacient.dni,
-                "nomComplet": pacient.nomcomplet,
-                "telefon": pacient.telefon,
-                "hospitalPacient": pacient.hospitalpacient,
-                "dniMetgeAssociat": pacient.dnimetgeassociat,
-                "malaltia": pacient.malaltia
-            }
-            for pacient in pacients
-        ]
+        # Format the results as a list of dictionaries
+        result = [{"nomComplet": pacient.nomcomplet.strip(), "dni": pacient.dni.strip()} for pacient in pacients]
 
         return jsonify(result), 200
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+@app.route('/getPacientDetails/<dni>', methods=['GET'])
+def getPacientDetails(dni):
+    try:
+        # Query the Pacient table to find the record with the matching DNI
+        pacient = Pacient.query.filter_by(dni=dni).first()
+
+        # Check if the pacient exists
+        if not pacient:
+            return jsonify({"message": "Pacient not found"}), 404
+
+        # Serialize the pacient data
+        result = {
+            "dni": pacient.dni.strip(),
+            "nomComplet": pacient.nomcomplet.strip(),
+            "telefon": pacient.telefon.strip(),
+            "hospitalPacient": pacient.hospitalpacient,
+            "dniMetgeAssociat": pacient.dnimetgeassociat.strip(),
+            "malaltia": pacient.malaltia.strip()
+        }
+
+        return jsonify(result), 200
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+@app.route('/getBooleanState/<int:id>/<field>', methods=['GET'])
+def getBooleanState(id, field):
+    try:
+        # Dynamically check the boolean field
+        if field not in ['febre', 'desaturacio', 'increps', 'tirmusc', 'ofeg', 'xiulets']:
+            return jsonify({"error": "Invalid boolean field"}), 400
+
+        # Query the specific field for the given id
+        resposta = respostaquestionari.query.with_entities(getattr(respostaquestionari, field)).filter_by(id=id).first()
+
+        if resposta is None:
+            return jsonify({"error": "respostaquestionari not found"}), 404
+
+        # Return the state of the boolean field
+        return jsonify({field: resposta[0]}), 200
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+    
+
+@app.route('/setBooleanState/<int:id>/<field>', methods=['POST'])
+def setBooleanState(id, field):
+    try:
+        # Validate the boolean field
+        if field not in ['febre', 'desaturacio', 'increps', 'tirmusc', 'ofeg', 'xiulets']:
+            return jsonify({"error": "Invalid boolean field"}), 400
+
+        # Get the new state from the request
+        data = request.get_json()
+        new_state = data.get('state')
+        if new_state is None or not isinstance(new_state, bool):
+            return jsonify({"error": "State must be a boolean"}), 400
+
+        # Update the specific field for the given id
+        resposta = respostaquestionari.query.filter_by(id=id).first()
+        if resposta is None:
+            return jsonify({"error": "respostaquestionari not found"}), 404
+
+        # Dynamically set the field
+        setattr(resposta, field, new_state)
+        db.session.commit()
+
+        return jsonify({"message": f"State of {field} updated to {new_state}", "id": id}), 200
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({"error": str(e)}), 500
+
+@app.route('/getPacientNomComplet/<dni>', methods=['GET'])
+def getPacientNomComplet(dni):
+    try:
+        # Query the Pacient table for the record with the matching DNI
+        pacient = Pacient.query.with_entities(Pacient.nomcomplet).filter_by(dni=dni).first()
+
+        # Check if the pacient exists
+        if not pacient:
+            return jsonify({"message": "Pacient not found"}), 404
+
+        # Return the nomComplet
+        return jsonify({"nomComplet": pacient.nomcomplet.strip()}), 200
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
@@ -201,4 +294,4 @@ if __name__ == "__main__":
             db.create_all()
         except Exception as e:
             print(f"Database connection failed: {e}")
-    app.run(host="127.0.0.1", port=5000)
+    app.run(host="127.0.0.1", port=5000, debug=True)

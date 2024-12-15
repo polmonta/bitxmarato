@@ -31,9 +31,15 @@ primary key (sigles));
 
 
 create table respostaQuestionari
-(data TIMESTAMP,
+(id integer,
+data TIMESTAMP,
 pacient char(10),
 febre BOOLEAN,
-tos BOOLEAN,
-primary key (data, pacient),
+desaturacio BOOLEAN,
+increps BOOLEAN,
+tirmusc BOOLEAN,
+ofeg BOOLEAN,
+xiulets BOOLEAN,
+completed BOOLEAN default 0,
+primary key (id),
 foreign key (pacient) references pacients);
