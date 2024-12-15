@@ -24,7 +24,7 @@ const HomeScreen = () => {
             <View style={styles.buttonRow}>
                 <TouchableOpacity style={[ styles.buttonYes, activeButton === 'button1' && styles.buttonActiveYes,]} onPress={() => handlePress('button1')} >
                     <View style={styles.iconContainer}>
-
+                        <Image source={require('../images/yes.png')} style={styles.icon} /> 
                     </View>
                     <Text style={styles.buttonText}>SI  </Text>
                 </TouchableOpacity>
@@ -32,20 +32,18 @@ const HomeScreen = () => {
             <View style={styles.buttonRow}>
                 <TouchableOpacity style={[ styles.buttonNo, activeButton === 'button2' && styles.buttonActiveNo,]} onPress={() => handlePress('button2')} >
                     <View style={styles.iconContainer}>
-
+                        <Image source={require('../images/cross.png')} style={styles.icon} resizeMode='stretch'/> 
                     </View>
                     <Text style={styles.buttonText}>NO </Text>
                 </TouchableOpacity>
             </View>
-            
-            
         </View>
         <View style={styles.arrowsContainer}>
-            <TouchableOpacity style={styles.arrowContainer} onPress={() => navigation.navigate("Respiracions")}>
-
+            <TouchableOpacity style={[styles.arrowContainer, {marginLeft: '5%' }]} onPress={() => navigation.navigate("Respiracions")}>
+                <Image source={require('../images/flechas.png')} style={[styles.icon, { transform: [{ rotate: '180deg' }]}]} /> 
             </TouchableOpacity>
             <TouchableOpacity style={styles.arrowContainer} onPress={() => navigation.navigate("Ofeg")}>
-
+                <Image source={require('../images/flechas.png')} style={styles.icon} /> 
             </TouchableOpacity>
         </View>
     </View>
@@ -59,17 +57,19 @@ const styles = StyleSheet.create({
     },
 
     questionContainer: {
-        width: Width,
+        width: Width*0.8,
         height: Height*0.2,
         justifyContent: 'center', 
         alignItems: 'center',
         marginTop: Height*0.2,
+        alignSelf: 'center',
     },
 
     questionText: {
         fontSize: 30,
         fontWeight:'bold',
         color: modeB,
+        textAlign: 'center',
     },
 
     buttonsContainer: {
@@ -136,9 +136,8 @@ const styles = StyleSheet.create({
         alignSelf:'center',
     },
     iconContainer: {
-        width: '35%',
-        height: '80%',
-        backgroundColor: 'black',
+        width: '25%',
+        height: '50%',
         alignSelf: 'center',
     },
 
@@ -152,7 +151,11 @@ const styles = StyleSheet.create({
     arrowContainer: {
         height: '80%',
         width: '20%',
-        backgroundColor: 'black',
+        marginRight: '5%',
+    },
+    icon: {
+        width:'100%',
+        height: '100%',  
     }
 });
 

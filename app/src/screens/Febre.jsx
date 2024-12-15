@@ -17,6 +17,11 @@ const HomeScreen = () => {
   const navigation = useNavigation();
   return (
     <View style={styles.container}>
+        <View style={styles.crossContainer}>
+            <TouchableOpacity style={styles.crossBox} onPress={() => navigation.navigate("Main")}>
+                <Image source={require('../images/cruz.png')} style={styles.icon} resizeMode='contain'></Image>
+            </TouchableOpacity>
+        </View>
         <View style={styles.questionContainer}>
             <Text style={styles.questionText}>Té febre?</Text>
         </View>
@@ -24,7 +29,7 @@ const HomeScreen = () => {
             <View style={styles.buttonRow}>
                 <TouchableOpacity style={[ styles.buttonYes, activeButton === 'button1' && styles.buttonActiveYes,]} onPress={() => handlePress('button1')} >
                     <View style={styles.iconContainer}>
-
+                        <Image source={require('../images/yes.png')} style={styles.icon} /> 
                     </View>
                     <Text style={styles.buttonText}>SI  </Text>
                 </TouchableOpacity>
@@ -32,7 +37,7 @@ const HomeScreen = () => {
             <View style={styles.buttonRow}>
                 <TouchableOpacity style={[ styles.buttonNo, activeButton === 'button2' && styles.buttonActiveNo,]} onPress={() => handlePress('button2')} >
                     <View style={styles.iconContainer}>
-
+                        <Image source={require('../images/cross.png')} style={styles.icon} resizeMode='stretch'/> 
                     </View>
                     <Text style={styles.buttonText}>NO </Text>
                 </TouchableOpacity>
@@ -42,7 +47,7 @@ const HomeScreen = () => {
         </View>
         <View style={styles.arrowsContainer}>
             <TouchableOpacity style={styles.arrowContainer} onPress={() => navigation.navigate("Desaturacio")}>
-                
+                <Image source={require('../images/flechas.png')} style={styles.icon} /> 
             </TouchableOpacity>
         </View>
     </View>
@@ -54,13 +59,21 @@ const styles = StyleSheet.create({
         flex: 1,
         backgroundColor: modeA,
     },
-
+    crossContainer: {
+        height: Height*0.2,
+        justifyContent: 'flex-end',
+        alignItems: 'flex-end',
+    },
+    crossBox: {
+        height: '30%',
+        width: '15%',     
+        marginRight: '5%',
+    },
     questionContainer: {
         width: Width,
         height: Height*0.2,
         justifyContent: 'center', 
         alignItems: 'center',
-        marginTop: Height*0.2,
     },
 
     questionText: {
@@ -133,9 +146,8 @@ const styles = StyleSheet.create({
         alignSelf:'center',
     },
     iconContainer: {
-        width: '35%',
-        height: '80%',
-        backgroundColor: 'black',
+        width: '25%',
+        height: '50%',
         alignSelf: 'center',
     },
 
@@ -149,7 +161,11 @@ const styles = StyleSheet.create({
     arrowContainer: {
         height: '80%',
         width: '20%',
-        backgroundColor: 'black',
+        marginRight: '5%',
+    },
+    icon: {
+        width:'100%',
+        height: '100%',  
     }
 });
 
