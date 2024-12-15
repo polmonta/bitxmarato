@@ -1,0 +1,20 @@
+curl -X POST http://127.0.0.1:5000/crearPacient \
+-H "Content-Type: application/json" \
+-d '{
+  "dni": "1234567890",
+  "nomComplet": "John Doe",
+  "telefon": "1234567890",
+  "hospitalPacient": 1,
+  "dniMetgeAssociat": "9876543210",
+  "malaltia": "COV19"
+}'
+
+
+curl -X POST http://127.0.0.1:5000/crearMetge \
+-H "Content-Type: application/json" \
+-d '{
+    "dni": "9876543210",
+    "nomComplet": "Laia A",
+    "telefon": "1234567890",
+    "hospitalAdscrit": 1
+}'

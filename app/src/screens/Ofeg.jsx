@@ -17,13 +17,8 @@ const HomeScreen = () => {
   const navigation = useNavigation();
   return (
     <View style={styles.container}>
-        <View style={styles.crossContainer}>
-            <TouchableOpacity style={styles.crossBox} onPress={() => navigation.navigate("Main")}>
-                <Image source={require('../images/cruz.png')} style={styles.icon} resizeMode='contain'></Image>
-            </TouchableOpacity>
-        </View>
         <View style={styles.questionContainer}>
-            <Text style={styles.questionText}>Té febre?</Text>
+            <Text style={styles.questionText}>Ha patit ofegs en repòs?</Text>
         </View>
         <View style={styles.buttonsContainer}>
             <View style={styles.buttonRow}>
@@ -43,10 +38,12 @@ const HomeScreen = () => {
                 </TouchableOpacity>
             </View>
             
-            
         </View>
         <View style={styles.arrowsContainer}>
-            <TouchableOpacity style={styles.arrowContainer} onPress={() => navigation.navigate("Desaturacio")}>
+            <TouchableOpacity style={[styles.arrowContainer, {marginLeft: '5%' }]} onPress={() => navigation.navigate("Musculs")}>
+                <Image source={require('../images/flechas.png')} style={[styles.icon, { transform: [{ rotate: '180deg' }]}]}/> 
+            </TouchableOpacity>
+            <TouchableOpacity style={styles.arrowContainer} onPress={() => navigation.navigate("Xiulets")}>
                 <Image source={require('../images/flechas.png')} style={styles.icon} /> 
             </TouchableOpacity>
         </View>
@@ -59,21 +56,13 @@ const styles = StyleSheet.create({
         flex: 1,
         backgroundColor: modeA,
     },
-    crossContainer: {
-        height: Height*0.2,
-        justifyContent: 'flex-end',
-        alignItems: 'flex-end',
-    },
-    crossBox: {
-        height: '30%',
-        width: '15%',     
-        marginRight: '5%',
-    },
+
     questionContainer: {
         width: Width,
         height: Height*0.2,
         justifyContent: 'center', 
         alignItems: 'center',
+        marginTop: Height*0.2,
     },
 
     questionText: {
@@ -155,7 +144,7 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         height: Height*0.1,
         marginTop: Height*0.05,
-        justifyContent: 'flex-end',
+        justifyContent: 'space-between',
         alignItems: 'center',
     },
     arrowContainer: {

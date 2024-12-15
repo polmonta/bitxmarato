@@ -8,6 +8,12 @@ import { modeA, modeB, Width, Height } from '../../globalVariables';
 
 
 const HomeScreen = () => {
+  const [activeButton, setActiveButton] = useState(null); // Estado para el botón activo
+  
+    const handlePress = (button) => {
+        // Si se presiona el botón activo, lo desactiva, si no, activa el nuevo botón
+        setActiveButton((prevActive) => (prevActive === button ? null : button));
+    };
   const navigation = useNavigation();
   return (
     <View style={styles.container}>
@@ -16,18 +22,17 @@ const HomeScreen = () => {
         </View>
         <View style={styles.buttonsContainer}>
             <View style={styles.buttonRow}>
-                <TouchableOpacity style={styles.buttonYes}>
+                <TouchableOpacity style={[ styles.buttonYes, activeButton === 'button1' && styles.buttonActiveYes,]} onPress={() => handlePress('button1')} >
                     <View style={styles.iconContainer}>
-
+                        <Image source={require('../images/yes.png')} style={styles.icon} /> 
                     </View>
                     <Text style={styles.buttonText}>SI  </Text>
                 </TouchableOpacity>
-                
             </View>
             <View style={styles.buttonRow}>
-                <TouchableOpacity style={styles.buttonNo}>
+                <TouchableOpacity style={[ styles.buttonNo, activeButton === 'button2' && styles.buttonActiveNo,]} onPress={() => handlePress('button2')} >
                     <View style={styles.iconContainer}>
-
+                        <Image source={require('../images/cross.png')} style={styles.icon} resizeMode='stretch'/> 
                     </View>
                     <Text style={styles.buttonText}>NO </Text>
                 </TouchableOpacity>
@@ -36,11 +41,11 @@ const HomeScreen = () => {
             
         </View>
         <View style={styles.arrowsContainer}>
-            <TouchableOpacity style={styles.arrowContainer} onPress={() => navigation.navigate("Febre")}>
-
+            <TouchableOpacity style={[styles.arrowContainer, {marginLeft: '5%' }]} onPress={() => navigation.navigate("Febre")}>
+                <Image source={require('../images/flechas.png')} style={[styles.icon, { transform: [{ rotate: '180deg' }]}]} /> 
             </TouchableOpacity>
             <TouchableOpacity style={styles.arrowContainer} onPress={() => navigation.navigate("Respiracions")}>
-
+                <Image source={require('../images/flechas.png')} style={styles.icon} /> 
             </TouchableOpacity>
         </View>
     </View>
@@ -88,6 +93,20 @@ const styles = StyleSheet.create({
         borderRadius: 10,
         justifyContent: 'space-around',
     },
+    buttonActiveYes: {
+        backgroundColor: 'green', // Color diferente para el botón activo
+        opacity: 0.7, // Cambiar opacidad cuando está activo
+        shadowColor: 'green',
+        shadowOffset: {
+            width: 0,
+            height: 0,
+        },
+        shadowOpacity: 2,
+        shadowRadius: 20,
+        elevation: 0,
+        borderColor: 'black',
+        borderWidth: 5,
+    },
     buttonNo: {
         height: '100%',
         width: '45%',
@@ -96,6 +115,20 @@ const styles = StyleSheet.create({
         borderRadius: 10,
         justifyContent: 'space-around',
     },
+    buttonActiveNo: {
+        backgroundColor: 'red', // Color diferente para el botón activo
+        opacity: 0.7, // Cambiar opacidad cuando está activo
+        shadowColor: 'red',
+        shadowOffset: {
+            width: 0,
+            height: 0,
+        },
+        shadowOpacity: 2,
+        shadowRadius: 20,
+        elevation: 0,
+        borderColor: 'black',
+        borderWidth: 5,
+    },
     buttonText: {
         color: 'white',
         fontWeight: '800',
@@ -103,9 +136,8 @@ const styles = StyleSheet.create({
         alignSelf:'center',
     },
     iconContainer: {
-        width: '35%',
-        height: '80%',
-        backgroundColor: 'black',
+        width: '25%',
+        height: '50%',
         alignSelf: 'center',
     },
 
@@ -119,7 +151,11 @@ const styles = StyleSheet.create({
     arrowContainer: {
         height: '80%',
         width: '20%',
-        backgroundColor: 'black',
+        marginRight: '5%',
+    },
+    icon: {
+        width:'100%',
+        height: '100%',  
     }
 });
 
