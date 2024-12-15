@@ -4,7 +4,7 @@ from flask_sqlalchemy import SQLAlchemy
 app = Flask(__name__)
 
 # Configure the database to use IPv4
-app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres:bxm12345@aws-0-eu-central-1.pooler.supabase.com:5432/postgres'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres.dcmskpcyynimvlpyxnbi:bxm12345@aws-0-eu-central-1.pooler.supabase.com:5432/postgres'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 db = SQLAlchemy(app)
