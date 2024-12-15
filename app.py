@@ -270,14 +270,14 @@ def setBooleanState(id, field):
 @app.route('/getPacientNomComplet/<dni>', methods=['GET'])
 def getPacientNomComplet(dni):
     try:
-        # Query the Pacient table for the record with the matching DNI
+        # Query the Pacient table for the nomcomplet column
         pacient = Pacient.query.with_entities(Pacient.nomcomplet).filter_by(dni=dni).first()
 
         # Check if the pacient exists
         if not pacient:
             return jsonify({"message": "Pacient not found"}), 404
 
-        # Return the nomComplet
+        # Return the nomcomplet
         return jsonify({"nomComplet": pacient.nomcomplet.strip()}), 200
     except Exception as e:
         return jsonify({"error": str(e)}), 500
