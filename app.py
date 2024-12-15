@@ -9,23 +9,38 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 db = SQLAlchemy(app)
 
-# Pacient model
+# CLASSES
 class Pacient(db.Model):
     __tablename__ = 'pacients'
     dni = db.Column(db.String(10), primary_key=True)  # dni is the primary key
-    nom_complet = db.Column(db.String(100), nullable=False)  # nomComplet is required
+    nomcomplet = db.Column(db.String(100), nullable=False)  # nomComplet is required
     telefon = db.Column(db.String(15), unique=True, nullable=False)  # telefon is unique and required
-    hospital_pacient = db.Column(db.Integer, nullable=False)  # hospitalPacient is required
-    dni_metge_associat = db.Column(db.String(10), nullable=False)  # dniMetgeAssociat is required
+    hospitalpacient = db.Column(db.Integer, nullable=False)  # hospitalPacient is required
+    dnimetgeassociat = db.Column(db.String(10), nullable=False)  # dniMetgeAssociat is required
     malaltia = db.Column(db.String(10), nullable=False)  # malaltia is required
 
-    def __init__(self, dni, nom_complet, telefon, hospital_pacient, dni_metge_associat, malaltia):
+    def __init__(self, dni, nomcomplet, telefon, hospitalpacient, dnimetgeassociat, malaltia):
         self.dni = dni
-        self.nom_complet = nom_complet
+        self.nomcomplet = nomcomplet
         self.telefon = telefon
-        self.hospital_pacient = hospital_pacient
-        self.dni_metge_associat = dni_metge_associat
+        self.hospitalpacient = hospitalpacient
+        self.dnimetgeassociat = dnimetgeassociat
         self.malaltia = malaltia
+
+class Hospital(db.Model):
+    __tablename__ = 'hospitals'
+    id = db.Column(db.Integer, primary_key=True)  # Primary key
+    nom = db.Column(db.String(100), nullable=False)  # Name of the hospital
+
+    def __init__(self, id, nom):
+        self.id = id
+        self.nom = nom
+
+
+
+
+
+# ENDPOINTS
 
 # Endpoint to create a new pacient
 @app.route('/crearPacient', methods=['POST'])
@@ -34,24 +49,24 @@ def crearPacient():
     data = request.get_json()
 
     dni = data.get('dni')
-    nom_complet = data.get('nomComplet')
+    nomcomplet = data.get('nomComplet')
     telefon = data.get('telefon')
-    hospital_pacient = data.get('hospitalPacient')
-    dni_metge_associat = data.get('dniMetgeAssociat')
+    hospitalpacient = data.get('hospitalPacient')
+    dnimetgeassociat = data.get('dniMetgeAssociat')
     malaltia = data.get('malaltia')
 
     # Input validation
-    if not dni or not nom_complet or not telefon or not hospital_pacient or not dni_metge_associat or not malaltia:
+    if not dni or not nomcomplet or not telefon or not hospitalpacient or not dnimetgeassociat or not malaltia:
         return jsonify({"error": "Missing required fields"}), 400
 
     try:
         # Create a new Pacient instance
         new_pacient = Pacient(
             dni=dni,
-            nom_complet=nom_complet,
+            nomcomplet=nomcomplet,
             telefon=telefon,
-            hospital_pacient=hospital_pacient,
-            dni_metge_associat=dni_metge_associat,
+            hospitalpacient=hospitalpacient,
+            dnimetgeassociat=dnimetgeassociat,
             malaltia=malaltia
         )
         # Add and commit to the database
@@ -61,6 +76,27 @@ def crearPacient():
     except Exception as e:
         db.session.rollback()
         return jsonify({"error": str(e)}), 500
+
+# Endpoint to create a hospital
+@app.route('/crearHospital', methods=['POST'])
+def crearHospital():
+    data = request.get_json()
+
+    id = data.get('id')
+    nom = data.get('nom')
+
+    if not id or not nom:
+        return jsonify({"error": "Missing required fields: id or nom"}), 400
+
+    try:
+        new_hospital = Hospital(id=id, nom=nom)
+        db.session.add(new_hospital)
+        db.session.commit()
+        return jsonify({"message": "Hospital created successfully", "id": new_hospital.id}), 201
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({"error": str(e)}), 500
+
 
 # Run the app
 if __name__ == "__main__":
