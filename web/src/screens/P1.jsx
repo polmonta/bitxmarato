@@ -1,28 +1,31 @@
 import React, { useEffect, useState } from 'react';
 import { View, Text, TextInput, FlatList, TouchableOpacity, StyleSheet, ActivityIndicator, Alert } from 'react-native';
-import { obtenerPacientesPorMedico } from '../services/pacientService'; // Importa el servicio
+import { obtenerPacientesPorMedico } from '../services/pacientService'; // Servicio para obtener pacientes
 
 const P1 = ({ navigation }) => {
   const [pacientes, setPacientes] = useState([]);
   const [loading, setLoading] = useState(false);
   const [dniMedico, setDniMedico] = useState(''); // Campo para el DNI del médico
 
-  // Función para cargar los pacientes de un médico específico
+  // Función para cargar los pacientes asociados al médico
   const cargarPacientes = async () => {
-    if (!dniMedico) {
+    if (!dniMedico.trim()) {
       Alert.alert('Error', 'Por favor, introduce el DNI del médico.');
       return;
     }
 
-    setLoading(true); // Activa el indicador de carga
+    setLoading(true);
 
     try {
-      const data = await obtenerPacientesPorMedico(dniMedico); // Llama al servicio con el DNI
-      setPacientes(data); // Establece los pacientes en el estado
+      console.log(dniMedico);
+      const data = await obtenerPacientesPorMedico(dniMedico); // Llama al servicio
+      console.log('Datos recibidos:', data); // Verifica los datos en consola
+      setPacientes(data); // Actualiza el estado con los datos
     } catch (error) {
-      Alert.alert('Error', error); // Muestra un mensaje de error si falla
+      console.error('Error al cargar pacientes:', error); // Registra el error
+      Alert.alert('Error', error || 'Error al obtener los pacientes.');
     } finally {
-      setLoading(false); // Detén el indicador de carga
+      setLoading(false);
     }
   };
 
@@ -48,21 +51,27 @@ const P1 = ({ navigation }) => {
           <Text>Cargando pacientes...</Text>
         </View>
       ) : (
-        <FlatList
-          data={pacientes}
-          keyExtractor={(item) => item.dni} // Supongo que "dni" es la clave única en tu base de datos
-          renderItem={({ item }) => (
-            <View style={styles.card}>
-              <Text style={styles.name}>{item.nomComplet}</Text>
-              <TouchableOpacity
-                style={styles.button}
-                onPress={() => navigation.navigate('VerDetalles', { paciente: item })}
-              >
-                <Text style={styles.buttonText}>Ver Detalles</Text>
-              </TouchableOpacity>
-            </View>
+        <>
+          {pacientes.length === 0 ? (
+            <Text style={styles.noDataText}>No hay pacientes asociados a este médico.</Text>
+          ) : (
+            <FlatList
+              data={pacientes}
+              keyExtractor={(item) => item.dni} // Usa "dni" como clave única
+              renderItem={({ item }) => (
+                <View style={styles.card}>
+                  <Text style={styles.name}>{item.nomComplet}</Text>
+                  <TouchableOpacity
+                    style={styles.button}
+                    onPress={() => navigation.navigate('VerDetalles', { paciente: item })}
+                  >
+                    <Text style={styles.buttonText}>Ver Detalles</Text>
+                  </TouchableOpacity>
+                </View>
+              )}
+            />
           )}
-        />
+        </>
       )}
     </View>
   );
@@ -104,6 +113,12 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
+  },
+  noDataText: {
+    textAlign: 'center',
+    fontSize: 16,
+    marginTop: 20,
+    color: '#555',
   },
   card: {
     backgroundColor: '#fff',
