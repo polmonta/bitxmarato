@@ -168,21 +168,18 @@ def crearRespostaQuestionari():
 @app.route('/getPacientsByMetge/<dniMetgeAssociat>', methods=['GET'])
 def getPacientsByMetge(dniMetgeAssociat):
     try:
-        # Query all pacients where dni_metge_associat matches the argument
-        pacients = Pacient.query.filter_by(dni_metge_associat=dniMetgeAssociat).all()
+        pacients = Pacient.query.filter_by(dnimetgeassociat=dniMetgeAssociat).all()
 
-        # Check if there are any matching records
-        if not pacients: 
+        if not pacients:
             return jsonify({"message": "No pacients found for the given doctor."}), 404
 
-        # Convert the query results to a list of dictionaries
         result = [
             {
                 "dni": pacient.dni,
-                "nomComplet": pacient.nom_complet,
+                "nomComplet": pacient.nomcomplet,
                 "telefon": pacient.telefon,
-                "hospitalPacient": pacient.hospital_pacient,
-                "dniMetgeAssociat": pacient.dni_metge_associat,
+                "hospitalPacient": pacient.hospitalpacient,
+                "dniMetgeAssociat": pacient.dnimetgeassociat,
                 "malaltia": pacient.malaltia
             }
             for pacient in pacients
@@ -191,6 +188,10 @@ def getPacientsByMetge(dniMetgeAssociat):
         return jsonify(result), 200
     except Exception as e:
         return jsonify({"error": str(e)}), 500
+
+@app.route('/routes', methods=['GET'])
+def get_routes():
+    return jsonify([str(rule) for rule in app.url_map.iter_rules()])
 
 # Run the app
 if __name__ == "__main__":
