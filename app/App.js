@@ -9,6 +9,7 @@ import Musculs from './src/screens/Musculs';
 import Ofeg from './src/screens/Ofeg'; 
 import Xiulets from './src/screens/Xiulets'; 
 import Blau from './src/screens/Blau'; 
+import Final from './src/screens/Final'; 
 const Stack = createStackNavigator();
 
 export default function App() {
@@ -27,6 +28,7 @@ export default function App() {
         <Stack.Screen name="Ofeg" component={Ofeg} options={{ headerShown: false }} />
         <Stack.Screen name="Xiulets" component={Xiulets} options={{ headerShown: false }} />
         <Stack.Screen name="Blau" component={Blau} options={{ headerShown: false }} />
+        <Stack.Screen name="Final" component={Final} options={{ headerShown: false }} />
       </Stack.Navigator>
     </NavigationContainer>
   );

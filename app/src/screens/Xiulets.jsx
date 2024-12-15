@@ -41,7 +41,10 @@ const HomeScreen = () => {
             
         </View>
         <View style={styles.arrowsContainer}>
-            <TouchableOpacity style={styles.arrowContainer} onPress={() => navigation.navigate("Xiulets")}>
+            <TouchableOpacity style={[styles.arrowContainer, {marginLeft: '5%' }]} onPress={() => navigation.navigate("Ofeg")}>
+                <Image source={require('../images/flechas.png')} style={[styles.icon, { transform: [{ rotate: '180deg' }]}]}/> 
+            </TouchableOpacity>
+            <TouchableOpacity style={styles.acabarQuest} onPress={() => navigation.navigate("Final")}>
                 <Text style={styles.textFinal}>Acabar Questionari</Text>
             </TouchableOpacity>
         </View>
@@ -145,7 +148,7 @@ const styles = StyleSheet.create({
         justifyContent: 'flex-end',
         alignItems: 'flex-end',
     },
-    arrowContainer: {
+    acabarQuest: {
         height: '80%',
         width: '50%',
         marginRight: '5%',
@@ -159,6 +162,11 @@ const styles = StyleSheet.create({
         shadowOpacity: 0.5,
         shadowRadius: 10,
         elevation: 0,
+    },
+    arrowContainer: {
+        height: '100%',
+        width: '20%',
+        marginRight: '20%',
     },
     icon: {
         width:'100%',
