@@ -18,7 +18,7 @@ const HomeScreen = () => {
   return (
     <View style={styles.container}>
         <View style={styles.questionContainer}>
-            <Text style={styles.questionText}>Ha xiulets?</Text>
+            <Text style={styles.questionText}>Ha notat xiulets?</Text>
         </View>
         <View style={styles.buttonsContainer}>
             <View style={styles.buttonRow}>
@@ -41,11 +41,8 @@ const HomeScreen = () => {
             
         </View>
         <View style={styles.arrowsContainer}>
-            <TouchableOpacity style={[styles.arrowContainer, {marginLeft: '5%' }]} onPress={() => navigation.navigate("Ofeg")}>
-                <Image source={require('../images/flechas.png')} style={[styles.icon, { transform: [{ rotate: '180deg' }]}]} /> 
-            </TouchableOpacity>
             <TouchableOpacity style={styles.arrowContainer} onPress={() => navigation.navigate("Xiulets")}>
-                <Image source={require('../images/flechas.png')} style={styles.icon} /> 
+                <Text style={styles.textFinal}>Acabar Questionari</Text>
             </TouchableOpacity>
         </View>
     </View>
@@ -143,19 +140,35 @@ const styles = StyleSheet.create({
 
     arrowsContainer: {
         flexDirection: 'row',
-        height: Height*0.1,
-        marginTop: Height*0.05,
-        justifyContent: 'space-between',
-        alignItems: 'center',
+        height: Height*0.06,
+        marginTop: Height*0.06,
+        justifyContent: 'flex-end',
+        alignItems: 'flex-end',
     },
     arrowContainer: {
         height: '80%',
-        width: '20%',
+        width: '50%',
         marginRight: '5%',
+        backgroundColor: '#f3f2f7',
+        shadowColor: 'black',
+        borderRadius: 15,
+        shadowOffset: {
+            width: 0,
+            height: 0,
+        },
+        shadowOpacity: 0.5,
+        shadowRadius: 10,
+        elevation: 0,
     },
     icon: {
         width:'100%',
         height: '100%',  
+    },
+    textFinal:{
+        fontSize: 20,
+        alignSelf: 'center',
+        marginTop: '4%',
+        fontWeight: 'bold',
     }
 });
 
